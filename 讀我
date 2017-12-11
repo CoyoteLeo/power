@@ -1,0 +1,335 @@
+方便讓人熟悉上手，做了一些簡單的說明文件
+
+-----------------------環境設定表格--開始------------------------------------
+
+┌---------------------------------------------------------┐
+|                      環境版本                           |
+├-------------------------┬-------------------------------┤
+|       套件名稱          |  版本                         |
+├-------------------------┼-------------------------------┤
+| XAMPP Control Panel     │ 3.2.2                         |
+├-------------------------┼-------------------------------|
+│ Apache                  │ 2.4                           |
+├-------------------------┼-------------------------------|
+│ PHP                     | 7.1.9                         |
+├-------------------------┼-------------------------------|
+│ PHP.ini                 | memory_limit=128M             |
+|                         | upload_max_filesize=2048M     |
+|                         | post_max_size=4096M           |
+├-------------------------┼-------------------------------|
+| Microsoft Drivers       | 4.3 For Php 7.1 or 7.0        |
+| php/ext                 | php_sqlsrv_71_ts_x86.dll      |
+|                         | php_pdo_sqlsrv_71_ts_x86.dll  |
+├-------------------------┼-------------------------------|
+│ Laravel                 | 5.5.13                        |
+└-------------------------┴-------------------------------┘
+
+┌---------------------------------------------------------┐
+|   Microsoft SQL Service 設定                            |
+├---------------------------------------------------------┤
+|   資料庫設定   Config/database.php                      |
+├---------------------------------------------------------┤
+|   'driver'   => 'sqlsrv',                               |
+|   'host'     => env('DB_HOST', '122.117.135.215,63221'),|
+|   'port'     => env('DB_PORT', '63221'),                |
+|   'database' => env('DB_DATABASE', 'power_test'),       |
+|   'username' => env('DB_USERNAME', 'icpsi'),            |
+|   'password' => env('DB_PASSWORD', '59209167'),         |
+|   'charset'  => 'utf8',                                 |
+|   'prefix'  => '',                                      |
+├---------------------------------------------------------┤
+|   環境設定檔案 test/env                                 |
+├---------------------------------------------------------┤
+|   DB_CONNECTION=sqlsrv                                  |
+|   DB_HOST=122.117.135.215,63221                         |
+|   DB_PORT=633221                                        |
+|   DB_DATABASE=power_test                                |
+|   DB_USERNAME=icpsi                                     |
+|   DB_PASSWORD=59209167                                  |
+└---------------------------------------------------------┘
+┌---------------------------------------------------------┐
+|               公共使用區    /public                     |
+├---------------┬-----------------------------------------┤
+|      路徑     |             說明                        |
+├---------------┼-----------------------------------------┤  
+|     CSS       | CSS檔案地區，專門用途排版、圖示標籤設定 |
+├---------------┼-----------------------------------------┤
+|     demo      | 套用Tree template 的範例，供參考        |
+├---------------┼-----------------------------------------┤
+|     font      | 字形放置的地方，供Apache 使用           |    
+├---------------┼-----------------------------------------┤   
+|     uploads   | 上傳圖片影片的地方，供Apache 使用       |   
+├---------------┼-----------------------------------------┤
+|     images    | 圖片放置的地方                          |
+├---------------┼-----------------------------------------┤
+|     js        | 放置Jquery、Bootstrap 的檔案 (前端動態) |
+├---------------┼-----------------------------------------┤
+|     PhpMailer | 專門傳送Email的套件                     |
+└---------------┴-----------------------------------------┘
+
+Http.conf設定加入這段
+
+<VirtualHost *:80>
+  DocumentRoot "C:/xampp/htdocs/power/public/"
+  <Directory "C:/xampp/htdocs/power/public/">
+    AllowOverride all
+  </Directory>
+</VirtualHost>
+
+-----------------------環境設定表格--結束------------------------------------
+
+
+--------------初次建立-開始--------------------------------------------------
+
+Migration-快速建立資料庫、外鍵關聯
+
++------+-------------------------------------------------------------+
+| Ran? | Migration                                                   |
++------+-------------------------------------------------------------+
+| Y    | 2017_10_27_170000_create_power_plant_deps_table             |
+| Y    | 2017_10_27_170001_create_power_plant_staffs_table           |
+| Y    | 2017_10_27_170002_create_power_plant_news_table             |
+| Y    | 2017_10_27_170020_create_contractors_table                  |
+| Y    | 2017_10_27_170021_create_contractor_projects_table          |
+| Y    | 2017_10_27_170022_create_contractor_staffs_table            |
+| Y    | 2017_10_27_170030_create_check_records_table                |
+| Y    | 2017_10_27_170031_create_check_record_items_table           |
+| Y    | 2017_10_27_170032_create_check_record_item_proofs_table     |
+| Y    | 2017_10_27_170033_create_check_record_staffs_table          |
+| Y    | 2017_10_27_170040_create_terms_table                        |
+| Y    | 2017_10_27_170050_create_inspections_table                  |
+| Y    | 2017_10_27_170051_create_inspection_specs_table             |
+| Y    | 2017_10_27_170052_create_inspection_check_items_table       |
+| Y    | 2017_10_27_170053_create_inspection_check_item_proofs_table |
++------+-------------------------------------------------------------+
+
+test/database/migration 下指令migration專用檔案
+在Test 資料匣下開啟Command line
+下指令 
+php artisan migrate:install 建立Migrate資料表
+php artisan migrate         建立所有資料表、並做所有關聯。(DataBase關聯表請見.....關聯圖表)
+
+--------------初次建立-結束------------------------------------------------
+
+-----------------------(Model View Controller)Route-開始------------------------------------
+
+Route
++--------+----------+----------------------------------------------+----------------------------+----------------------------------------------------------------+--------------+
+| Method   | URI                                          | Name                       | Action                                                                  | Middleware   |
++--------+----------+----------------------------------------------+----------------------------+----------------------------------------------------------------+--------------+
+| GET|HEAD | api/csv                                      | Csv                        | App\Http\Controllers\CsvController@index                                | web          |
+| GET|HEAD | api/csv/download/CheckRecord                 |                            | App\Http\Controllers\CsvController@CheckRecord_Donwload                 | web          |
+| GET|HEAD | api/csv/download/CheckRecordItem             |                            | App\Http\Controllers\CsvController@CheckRecordItem_Donwload             | web          |
+| GET|HEAD | api/csv/download/CheckRecordItemProof        |                            | App\Http\Controllers\CsvController@CheckRecordItemProof_Donwload        | web          |
+| GET|HEAD | api/csv/download/CheckRecordStaff            |                            | App\Http\Controllers\CsvController@CheckRecordStaff_Donwload            | web          |
+| GET|HEAD | api/csv/download/Contractor                  |                            | App\Http\Controllers\CsvController@Contractor_Donwload                  | web          |
+| GET|HEAD | api/csv/download/ContractorProject           |                            | App\Http\Controllers\CsvController@ContractorProject_Donwload           | web          |
+| GET|HEAD | api/csv/download/ContractorStaff             |                            | App\Http\Controllers\CsvController@ContractorStaff_Donwload             | web          |
+| GET|HEAD | api/csv/download/ContractorViolationRank     |                            | App\Http\Controllers\CsvController@ContractorViolationRank_Donwload     | web          |
+| GET|HEAD | api/csv/download/ContractorViolationRecode   |                            | App\Http\Controllers\CsvController@ContractorViolationRecode_Donwload   | web          |
+| GET|HEAD | api/csv/download/EngineerSafetyViolationRank |                            | App\Http\Controllers\CsvController@EngineerSafetyViolationRank_Donwload | web          |
+| GET|HEAD | api/csv/download/Inspection                  |                            | App\Http\Controllers\CsvController@Inspection_Donwload                  | web          |
+| GET|HEAD | api/csv/download/InspectionCheckItem         |                            | App\Http\Controllers\CsvController@InspectionCheckItem_Donwload         | web          |
+| GET|HEAD | api/csv/download/InspectionCheckItemProof    |                            | App\Http\Controllers\CsvController@InspectionCheckItemProof_Donwload    | web          |
+| GET|HEAD | api/csv/download/InspectionSpec              |                            | App\Http\Controllers\CsvController@InspectionSpec_Donwload              | web          |
+| GET|HEAD | api/csv/download/ListViolationRecode         |                            | App\Http\Controllers\CsvController@ListViolationRecode_Donwload         | web          |
+| GET|HEAD | api/csv/download/PowerPlantDep               |                            | App\Http\Controllers\CsvController@PowerPlantDep_Donwload               | web          |
+| GET|HEAD | api/csv/download/PowerPlantNews              |                            | App\Http\Controllers\CsvController@PowerPlantNews_Donwload              | web          |
+| GET|HEAD | api/csv/download/PowerPlantStaff             |                            | App\Http\Controllers\CsvController@PowerPlantStaff_Donwload             | web          |
+| GET|HEAD | api/csv/download/Terms                       |                            | App\Http\Controllers\CsvController@Terms_Donwload                       | web          |
+| GET|HEAD | api/json                                     | Json                       | App\Http\Controllers\JsonController@index                               | web          |
+| GET|HEAD | api/json/CheckRecord                         |                            | App\Http\Controllers\JsonController@CheckRecord_json                    | web          |
+| GET|HEAD | api/json/CheckRecordItem                     |                            | App\Http\Controllers\JsonController@CheckRecordItem_json                | web          |
+| GET|HEAD | api/json/CheckRecordItemProof                |                            | App\Http\Controllers\JsonController@CheckRecordItemProof_json           | web          |
+| GET|HEAD | api/json/Contractor                          |                            | App\Http\Controllers\JsonController@Contractor_json                     | web          |
+| GET|HEAD | api/json/ContractorProject                   |                            | App\Http\Controllers\JsonController@ContractorProject_json              | web          |
+| GET|HEAD | api/json/ContractorStaff                     |                            | App\Http\Controllers\JsonController@ContractorStaff_json                | web          |
+| GET|HEAD | api/json/ContractorViolationRank             |                            | App\Http\Controllers\JsonController@ContractorViolationRank_json        | web          |
+| GET|HEAD | api/json/ContractorViolationRecode           |                            | App\Http\Controllers\JsonController@ContractorViolationRecode_json      | web          |
+| GET|HEAD | api/json/Inspection                          |                            | App\Http\Controllers\JsonController@Inspection_json                     | web          |
+| GET|HEAD | api/json/InspectionCheckItem                 |                            | App\Http\Controllers\JsonController@InspectionCheckItem_json            | web          |
+| GET|HEAD | api/json/InspectionSpec                      |                            | App\Http\Controllers\JsonController@InspectionSpec_json                 | web          |
+| GET|HEAD | api/json/ListViolationRecode                 |                            | App\Http\Controllers\JsonController@ListViolationRecode_json            | web          |
+| GET|HEAD | api/json/PowerPlantDep                       |                            | App\Http\Controllers\JsonController@PowerPlantDep_json                  | web          |
+| GET|HEAD | api/json/PowerPlantNews                      |                            | App\Http\Controllers\JsonController@PowerPlantNews_json                 | web          |
+| GET|HEAD | api/json/PowerPlantStaff                     |                            | App\Http\Controllers\JsonController@PowerPlantStaff_json                | web          |
+| GET|HEAD | api/json/Terms                               |                            | App\Http\Controllers\JsonController@Terms_json                          | web          |
+| GET|HEAD | api/user                                     |                            | Closure                                                                 | api,auth:api |
+| GET|HEAD | char                                         | char                       | App\Http\Controllers\CharController@index                               | web          |
+| GET|HEAD | char/EngineerSafetyViolationRank             |                            | App\Http\Controllers\CharController@EngineerSafetyViolationRank_bar     | web          |
+| GET|HEAD | char/ListViolationRecode                     |                            | App\Http\Controllers\CharController@ListViolationRecode_bar             | web          |
+| GET|HEAD | history                                      | history                    | App\Http\Controllers\HistoryController@index                            | web          |
+| GET|HEAD | list                                         | List                       | App\Http\Controllers\ListController@index                               | web          |
+| GET|HEAD | login                                        |                            | App\Http\Controllers\LoginController@index                              | web          |
+| GET|HEAD | login/QueryPassword                          |                            | App\Http\Controllers\LoginController@QueryPassword                      | web          |
+| GET|HEAD | manage                                       | manage.index               | App\Http\Controllers\ManageController@index                             | web          |
+| GET|HEAD | manage/CheckRecord                           | CheckRecord.index          | App\Http\Controllers\ManageController@CheckRecord                       | web          |
+| GET|HEAD | manage/CheckRecord/delete/{id}               |                            | App\Http\Controllers\ManageController@CheckRecord_delete                | web          |
+| GET|HEAD | manage/CheckRecord/edit/{id}                 |                            | App\Http\Controllers\ManageController@CheckRecord_edit                  | web          |
+| POST     | manage/CheckRecord/insert                    |                            | App\Http\Controllers\ManageController@CheckRecord_insert                | web          |
+| POST     | manage/CheckRecord/update                    |                            | App\Http\Controllers\ManageController@CheckRecord_update                | web          |
+| GET|HEAD | manage/CheckRecordItem                       | CheckRecordItem.index      | App\Http\Controllers\ManageController@CheckRecordItem                   | web          |
+| GET|HEAD | manage/CheckRecordItem/delete/{id}           |                            | App\Http\Controllers\ManageController@CheckRecordItem_delete            | web          |
+| GET|HEAD | manage/CheckRecordItem/edit/{id}             |                            | App\Http\Controllers\ManageController@CheckRecordItem_edit              | web          |
+| POST     | manage/CheckRecordItem/insert                |                            | App\Http\Controllers\ManageController@CheckRecordItem_insert            | web          |
+| POST     | manage/CheckRecordItem/update                |                            | App\Http\Controllers\ManageController@CheckRecordItem_update            | web          |
+| GET|HEAD | manage/CheckRecordItemProof                  | CheckRecordItemProof.index | App\Http\Controllers\ManageController@CheckRecordItemProof              | web          |
+| GET|HEAD | manage/CheckRecordItemProof/delete/{id}      |                            | App\Http\Controllers\ManageController@CheckRecordItemProof_delete       | web          |
+| GET|HEAD | manage/CheckRecordItemProof/edit/{id}        |                            | App\Http\Controllers\ManageController@CheckRecordItemProof_edit         | web          |
+| POST     | manage/CheckRecordItemProof/insert           |                            | App\Http\Controllers\ManageController@CheckRecordItemProof_insert       | web          |
+| POST     | manage/CheckRecordItemProof/update           |                            | App\Http\Controllers\ManageController@CheckRecordItemProof_update       | web          |
+| GET|HEAD | manage/Contractor                            | Contractor.index           | App\Http\Controllers\ManageController@Contractor                        | web          |
+| GET|HEAD | manage/Contractor/delete/{id}                |                            | App\Http\Controllers\ManageController@Contractor_delete                 | web          |
+| GET|HEAD | manage/Contractor/edit/{id}                  |                            | App\Http\Controllers\ManageController@Contractor_edit                   | web          |
+| POST     | manage/Contractor/insert                     |                            | App\Http\Controllers\ManageController@Contractor_insert                 | web          |
+| POST     | manage/Contractor/update                     |                            | App\Http\Controllers\ManageController@Contractor_update                 | web          |
+| GET|HEAD | manage/ContractorProject                     | ContractorProject.index    | App\Http\Controllers\ManageController@ContractorProject                 | web          |
+| GET|HEAD | manage/ContractorProject/delete/{id}         |                            | App\Http\Controllers\ManageController@ContractorProject_delete          | web          |
+| GET|HEAD | manage/ContractorProject/edit/{id}           |                            | App\Http\Controllers\ManageController@ContractorProject_edit            | web          |
+| POST     | manage/ContractorProject/insert              |                            | App\Http\Controllers\ManageController@ContractorProject_insert          | web          |
+| POST     | manage/ContractorProject/update              |                            | App\Http\Controllers\ManageController@ContractorProject_update          | web          |
+| GET|HEAD | manage/ContractorStaff                       | ContractorStaff.index      | App\Http\Controllers\ManageController@ContractorStaff                   | web          |
+| GET|HEAD | manage/ContractorStaff/delete/{id}           |                            | App\Http\Controllers\ManageController@ContractorStaff_delete            | web          |
+| GET|HEAD | manage/ContractorStaff/edit/{id}             |                            | App\Http\Controllers\ManageController@ContractorStaff_edit              | web          |
+| POST     | manage/ContractorStaff/insert                |                            | App\Http\Controllers\ManageController@ContractorStaff_insert            | web          |
+| POST     | manage/ContractorStaff/update                |                            | App\Http\Controllers\ManageController@ContractorStaff_update            | web          |
+| GET|HEAD | manage/Inspection                            | Inspection.index           | App\Http\Controllers\ManageController@Inspection                        | web          |
+| GET|HEAD | manage/Inspection/delete/{id}                |                            | App\Http\Controllers\ManageController@Inspection_delete                 | web          |
+| GET|HEAD | manage/Inspection/edit/{id}                  |                            | App\Http\Controllers\ManageController@Inspection_edit                   | web          |
+| POST     | manage/Inspection/insert                     |                            | App\Http\Controllers\ManageController@Inspection_insert                 | web          |
+| POST     | manage/Inspection/update                     |                            | App\Http\Controllers\ManageController@Inspection_update                 | web          |
+| GET|HEAD | manage/InspectionCheckItem                   | InspectionCheckItem.index  | App\Http\Controllers\ManageController@InspectionCheckItem               | web          |
+| GET|HEAD | manage/InspectionCheckItem/delete/{id}       |                            | App\Http\Controllers\ManageController@InspectionCheckItem_delete        | web          |
+| GET|HEAD | manage/InspectionCheckItem/edit/{id}         |                            | App\Http\Controllers\ManageController@InspectionCheckItem_edit          | web          |
+| POST     | manage/InspectionCheckItem/insert            |                            | App\Http\Controllers\ManageController@InspectionCheckItem_insert        | web          |
+| POST     | manage/InspectionCheckItem/update            |                            | App\Http\Controllers\ManageController@InspectionCheckItem_update        | web          |
+| GET|HEAD | manage/InspectionSpec                        | InspectionSpec.index       | App\Http\Controllers\ManageController@InspectionSpec                    | web          |
+| GET|HEAD | manage/InspectionSpec/delete/{id}            |                            | App\Http\Controllers\ManageController@InspectionSpec_delete             | web          |
+| GET|HEAD | manage/InspectionSpec/edit/{id}              |                            | App\Http\Controllers\ManageController@InspectionSpec_edit               | web          |
+| POST     | manage/InspectionSpec/insert                 |                            | App\Http\Controllers\ManageController@InspectionSpec_insert             | web          |
+| POST     | manage/InspectionSpec/update                 |                            | App\Http\Controllers\ManageController@InspectionSpec_update             | web          |
+| GET|HEAD | manage/PowerPlantDep                         | PowerPlantDep.index        | App\Http\Controllers\ManageController@PowerPlantDep                     | web          |
+| GET|HEAD | manage/PowerPlantDep/delete/{id}             |                            | App\Http\Controllers\ManageController@PowerPlantDep_delete              | web          |
+| GET|HEAD | manage/PowerPlantDep/edit/{id}               |                            | App\Http\Controllers\ManageController@PowerPlantDep_edit                | web          |
+| POST     | manage/PowerPlantDep/insert                  |                            | App\Http\Controllers\ManageController@PowerPlantDep_insert              | web          |
+| POST     | manage/PowerPlantDep/update                  |                            | App\Http\Controllers\ManageController@PowerPlantDep_update              | web          |
+| GET|HEAD | manage/PowerPlantNews                        | PowerPlantNews.index       | App\Http\Controllers\ManageController@PowerPlantNews                    | web          |
+| GET|HEAD | manage/PowerPlantNews/delete/{id}            |                            | App\Http\Controllers\ManageController@PowerPlantNews_delete             | web          |
+| GET|HEAD | manage/PowerPlantNews/edit/{id}              |                            | App\Http\Controllers\ManageController@PowerPlantNews_edit               | web          |
+| POST     | manage/PowerPlantNews/insert                 |                            | App\Http\Controllers\ManageController@PowerPlantNews_insert             | web          |
+| POST     | manage/PowerPlantNews/update                 |                            | App\Http\Controllers\ManageController@PowerPlantNews_update             | web          |
+| GET|HEAD | manage/PowerPlantStaff                       | PowerPlantStaff.index      | App\Http\Controllers\ManageController@PowerPlantStaff                   | web          |
+| GET|HEAD | manage/PowerPlantStaff/delete/{id}           |                            | App\Http\Controllers\ManageController@PowerPlantStaff_delete            | web          |
+| GET|HEAD | manage/PowerPlantStaff/edit/{id}             |                            | App\Http\Controllers\ManageController@PowerPlantStaff_edit              | web          |
+| POST     | manage/PowerPlantStaff/insert                |                            | App\Http\Controllers\ManageController@PowerPlantStaff_insert            | web          |
+| POST     | manage/PowerPlantStaff/update                |                            | App\Http\Controllers\ManageController@PowerPlantStaff_update            | web          |
+| GET|HEAD | manage/Terms                                 | Terms.index                | App\Http\Controllers\ManageController@Terms                             | web          |
+| GET|HEAD | manage/Terms/delete/{id}                     |                            | App\Http\Controllers\ManageController@Terms_delete                      | web          |
+| GET|HEAD | manage/Terms/edit/{id}                       |                            | App\Http\Controllers\ManageController@Terms_edit                        | web          |
+| POST     | manage/Terms/insert                          |                            | App\Http\Controllers\ManageController@Terms_insert                      | web          |
+| POST     | manage/Terms/update                          |                            | App\Http\Controllers\ManageController@Terms_update                      | web          |
+| GET|HEAD | record                                       | Record                     | App\Http\Controllers\RecordController@index                             | web          |
+| POST     | record/insert                                |                            | App\Http\Controllers\RecordController@Recored_insert                    | web          |
+| GET|HEAD | record/news_all                              |                            | App\Http\Controllers\RecordController@news_all                          | web          |
++----------+----------------------------------------------+----------------------------+-------------------------------------------------------------------------+--------------+
+
+
+┌----------------------------------------------------------------------------------------------┐
+|                         View 頁面顯示                                                        |
+├------------------------/resources/view--顯示畫面用-------------------------------------------┤
+| 資料匣Foloder         |    網頁Web                                                           |
+├-----------------------┼----------------------------------------------------------------------┤
+| 分頁面   partials     | header    -載入CSS、Jquery、<head>的設定                             |
+|                       | top_navbar-最上面一欄寫者『台中電廠工安資訊系統』                    |
+├-----------------------┼----------------------------------------------------------------------┤
+│ 主畫面   layout       | app-主畫面的構成，載入partials分割好的頁面                           |
+├-----------------------┼----------------------------------------------------------------------┤
+| 首頁     Login        | index 首頁                                                           |
+|                       | QueryPassword 查詢密碼                                               |
+├-----------------------┼----------------------------------------------------------------------┤
+│ 查核紀錄 record       | index-查核紀錄首頁                                                   |
+├-----------------------┼----------------------------------------------------------------------┤
+│ 報表統計 char         | index-報表統計首頁                                                   |
+├-----------------------┼----------------------------------------------------------------------┤
+│ 歷史紀錄 history      | index-歷史紀錄首頁                                                   |
+├-----------------------┼----------------------------------------------------------------------┤
+| 條文查詢 list         | index-條文查詢首頁                                                   |
+├-----------------------┼----------------------------------------------------------------------┤
+| 管理者   Manage       | index                -管理員控制的介面                               |
+|                       | CheckRecord          -控制CheckRecord         資料庫                 |
+|                       | CheckRecordItem      -控制CheckRecordItem     資料庫                 |
+|                       | CheckRecordItemProof -控制CheckRecordItemProof資料庫                 |
+|                       | Contractor           -控制Contractor          資料庫                 |
+|                       | ContractorStaff      -控制ContractorStaff     資料庫                 |
+|                       | ContractorProject    -控制ContractorProject   資料庫                 |
+|                       | Inspection           -控制Inspection          資料庫                 |
+|                       | InspectionSpec       -控制InspectionSpec      資料庫                 |
+|                       | InspectionCheckItem  -控制InspectionCheckItem 資料庫                 |
+|                       | PowerPlanDep         -控制PowerPlanDep        資料庫                 |
+|                       | PowerPlanNews        -控制PowerPlanNews       資料庫                 |
+|                       | PowerPlanStaff       -控制PowerPlanStaff      資料庫                 |
+|                       | TermsS               -控制Terms               資料庫                 |
+├-----------------------┼----------------------------------------------------------------------┤
+| 管理者編輯            | CheckRecord          -編輯CheckRecord          資料                  |
+| Manage/edit           | CheckRecordItem      -編輯CheckRecord          資料                  |
+|                       | CheckRecordItemProof -編輯CheckRecordItemProof 資料                  |
+|                       | Contractor           -編輯Contractor           資料                  |
+|                       | ContractorStaff      -編輯ContractorStaff      資料                  |
+|                       | ContractorProject    -編輯ContractorProject    資料                  |
+|                       | Inspection           -編輯Inspection           資料                  |
+|                       | InspectionSpec       -編輯InspectionSpec       資料                  |
+|                       | InspectionCheckItem  -編輯InspectionCheckItem  資料                  |
+|                       | PowerPlanDep         -編輯PowerPlanDep         資料                  |
+|                       | PowerPlanNews        -編輯PowerPlanNews        資料                  |
+|                       | PowerPlanStaff       -編輯PowerPlanStaff       資料                  |
+|                       | Terms                -編輯Terms                資料                  | 
+├-----------------------┼----------------------------------------------------------------------┤
+
+
+┌------------------------------------------------------------------------------------------------┐
+|                            Controllers   控制器                                                |
+├-------------------┬-----------/app/Http/Controllers--控制器------------------------------------┤
+|   控制器名稱      |   Function方法用途                                                         |
+├-------------------┼----------------------------------------------------------------------------┤
+| HomeController    |   負責所有 Home 首頁       的  View事項                                    |
+|-------------------┼----------------------------------------------------------------------------┤
+| CharController    |   負責所有 Char 首頁       的  View事項                                    |
+|-------------------┼----------------------------------------------------------------------------┤
+| ListController    |   負責所有 List 首頁       的  View事項                                    |
+|-------------------┼----------------------------------------------------------------------------┤
+| RecordController  |   負責所有 Record 首頁     的  View事項                                    |
+|-------------------┼----------------------------------------------------------------------------┤
+| ManageController  |   負責所有 Manage 首頁     的  View事項                                    |
+|-------------------┼----------------------------------------------------------------------------┤
+└-------------------┴----------------------------------------------------------------------------┘
+
+┌----------------------------------------------------------------------------------------------------------┐
+|                              Model      模組                                                             |
+├-----------------------------┬-------------/app-----------------------------------------------------------┤
+|   模組  名稱                |   Function方法用途                                                         |
+├-----------------------------┼----------------------------------------------------------------------------┤
+| Check_Record                |   Check_Record的資料庫外鍵主鍵功能                                         |
+| Check_Records_Item          |   Check_Records_Item的資料庫外鍵主鍵功能                                   |
+| Check_Records_Item_Proof    |   Check_Records_Item_Proof的資料庫外鍵主鍵功能                             |
+|                             |                                                                            |
+|-----------------------------┼----------------------------------------------------------------------------┤
+| Contractor                  |   Contractor的資料庫外鍵主鍵功能                                           |
+| Contractors_Staff           |   Contractors_Staff的資料庫外鍵主鍵功能                                    |
+| Contractors_Project         |   Contractors_Project的資料庫外鍵主鍵功能                                  |
+├-----------------------------┼----------------------------------------------------------------------------┤
+| Inspection                  |   Inspection的資料庫外鍵主鍵功能                                           |
+| Inspections_Spec            |   Inspections_Spec的資料庫外鍵主鍵功能                                     |
+| Inspections_Check_Item      |   Inspections_Check_Item的資料庫外鍵主鍵功能                               |
+| Inspections_Check_Item_Proof|   Inspections_Check_Item_Proof的資料庫外鍵主鍵功能                         |
+├-----------------------------┼----------------------------------------------------------------------------┤
+| Power_Plant_Dep             |   Power_Plant_Dep的資料庫外鍵主鍵功能                                      |
+| Power_Plant_News            |   Power_Plant_News的資料庫外鍵主鍵功能                                     |
+| Power_Plant_Staff           |   Power_Plant_Staff的資料庫外鍵主鍵功能                                    |
+├-----------------------------┼----------------------------------------------------------------------------┤
+| Terms                       |   Terms的資料庫外鍵主鍵功能                                                |
+├-----------------------------┼----------------------------------------------------------------------------┤
+└-----------------------------┴----------------------------------------------------------------------------┘
+
+┌----------------------------------------------------------------------------------------------------------┐
+|        Auth   帳號驗證機制                                                                               |
+├----------------------------------------------------------------------------------------------------------┤

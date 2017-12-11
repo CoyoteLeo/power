@@ -1,0 +1,9 @@
+test/public
+↓↓↓↓↓
+專門儲存CSS、JS、JQuery等等相關套件或者元件庫
+
+test/resources/view  顯示畫面用的
+↓↓↓↓↓
+include-專門用於儲存常使用的的標籤，如：header、foot、選單、Navbar
+layout-儲存選單功能的首頁畫面
+partials-子畫面
